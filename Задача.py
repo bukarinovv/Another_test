@@ -2,20 +2,17 @@ import pandas as pd
 
 may = pd.read_excel('data.xlsx', usecols="B:E, G, H", header=0, skiprows=[1, 2], skipfooter=731-259)
 
-may_bonus = {}
+bonus_list = {}
 
-m_new = may[(may['new/current'] == 'новая') & (may['document'] == 'оригинал') & (may['status'] == 'ОПЛАЧЕНО')]
-for summa, name, date in zip(m_new['sum'], m_new['sale'], m_new['receiving_date']):
+m_new = may[(may['document'] == 'оригинал') & (may['status'] != 'ПРОСРОЧЕНО')]
+for deal, summa, name, date, status in zip(m_new['new/current'], m_new['sum'], m_new['sale'], m_new['receiving_date'], m_new['status']):
     if date.month in (5, 6):
-        may_bonus[name] = may_bonus.get(name, 0) + summa * 0.07
+        if deal == 'новая' and status == 'ОПЛАЧЕНО':
+            bonus = 0.07
+        elif deal == 'текущая':
+            bonus = 0.05 if summa > 10000 else 0.03
+        bonus_list[name] = bonus_list.get(name, 0) + summa * bonus
 
-m_cur = may[(may['new/current'] == 'текущая') & (may['document'] == 'оригинал') & (may['status'] != 'ПРОСРОЧЕНО')]
-for summa, name, date in zip(m_cur['sum'], m_cur['sale'], m_cur['receiving_date']):
-    if date.month in (5, 6):
-        if summa > 10000:
-            may_bonus[name] = may_bonus.get(name, 0) + summa * 0.05
-        else:
-            may_bonus[name] = may_bonus.get(name, 0) + summa * 0.03
 
-for name, bonus in may_bonus.items():
+for name, bonus in bonus_list.items():
     print(f'{name}: {round(bonus, 2)} руб.')
