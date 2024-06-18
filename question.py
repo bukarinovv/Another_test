@@ -2,13 +2,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import calendar, locale
 
-# 1 Вопрос
+#1 Вопрос
 df = pd.read_excel('data.xlsx', usecols="B, C", header=0, skiprows=list(range(1, 260)), skipfooter=731-370)
 filtered_df = df[df['status'] != 'ПРОСРОЧЕНО']
 print(f'Первый вопрос: {round(filtered_df['sum'].sum(), 2)} руб.')
 
 
-# 2 Вопрос
+#2 Вопрос
 df = pd.read_excel('data.xlsx', usecols="B, H", header=0, skiprows=[1, 2])
 data = {}
 for mon, summa in zip(df['receiving_date'], df['sum']):
@@ -22,11 +22,12 @@ months = list(map(lambda x: calendar.month_name[x], data.keys()))
 
 plt.plot(months, data.values(), c = 'r')
 plt.grid(True)
-plt.title('Выручка по месяцам, руб.')
+plt.title('''Второй вопрос:
+        Выручка по месяцам, руб.''')
 plt.show()
 
 
-# 3 Вопрос
+#3 Вопрос
 df = pd.read_excel('data.xlsx', usecols="B, D", header=0, skiprows=list(range(1, 486)), skipfooter=731-595)
 group = df.groupby('sale').sum()
 sorted_group = group.sort_values(by='sum', ascending=False)
@@ -40,8 +41,8 @@ print(f'Четвертый вопрос: {group[0]}')
 
 
 #5 Вопрос
-df = pd.read_excel('data.xlsx', usecols='G, H', header=0, skiprows=[1, 2])
-filtered_df = [str(x) for x in df['receiving_date'] if x.month == 6]
+df = pd.read_excel('data.xlsx', usecols='G, H', header=0, skiprows=[1, 2], skipfooter=731-130)
+filtered_df = [x for x in df['receiving_date'] if x.month == 6]
 print(f'Пятый вопрос: {len(filtered_df)} оригиналов договоров')
 
 
